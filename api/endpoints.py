@@ -333,17 +333,10 @@ async def delete_document(
     if not existing.data:
         raise HTTPException(status_code=404, detail="Document introuvable")
 
-    file_url = existing.data[0]["url"]  # L'URL publique
 
     # En déduire le chemin relatif dans le bucket (supprime le domaine de l'URL)
     # Exemple : https://xyz.supabase.co/storage/v1/object/public/documents/USER_ID/fichier.pdf
-    try:
-        from urllib.parse import urlparse
-        path = urlparse(file_url).path  # /storage/v1/object/public/documents/USER_ID/fichier.pdf
-        key = "/".join(path.split("/")[5:])  # → USER_ID/fichier.pdf
-    except Exception:
-        raise HTTPException(status_code=500, detail="Impossible d'extraire le chemin du fichier depuis l'URL")
-
+    key = existing.data[0]["url"]
     # 2. Supprimer l’entrée dans Supabase table "documents"
     delete_result = supabase.table("documents") \
         .delete() \
@@ -356,6 +349,7 @@ async def delete_document(
 
     # 3. Supprimer le fichier du storage Supabase
     try:
+        print(f"key: {key}")
         supabase.storage.from_("documents").remove([key])
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Erreur suppression storage: {str(e)}")
