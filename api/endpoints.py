@@ -98,24 +98,37 @@ def list_documents(user=Depends(get_current_user)):
 
 
 @router.post("/ask")
-def ask(request: QuestionRequest,user=Depends(get_current_user)):
+def ask(request: QuestionRequest, user=Depends(get_current_user)):
     try:
-        model_path="models/esti-rag-ft"
+        model_path = "models/esti-rag-ft"
+
         if os.path.exists(model_path) and os.path.isdir(model_path):
             query_vector = get_embedding(request.question, model=model_path)
         else:
-            query_vector = get_embedding(request.question,model="")  # modèle par défaut
+            query_vector = get_embedding(request.question, model="")  # modèle par défaut
+
+        user_id = user.get("sub")
+
+        # Filtre pour ne récupérer que les documents de l'utilisateur connecté
+        qdrant_filter = Filter(
+            must=[
+                FieldCondition(key="owner_id", match={"value": user_id})
+            ]
+        )
 
         results = client.search(
             collection_name=COLLECTION,
             query_vector=query_vector,
             limit=request.top_k,
-            with_payload=True
+            with_payload=True,
+            query_filter=qdrant_filter
         )
+
         return {
             "question": request.question,
             "results": [{"doc": r.payload["text"], "score": r.score} for r in results]
         }
+
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -377,12 +390,23 @@ async def delete_document(
     return {"status": "ok", "message": f"Document '{filename}' supprimé avec succès"}
 
 @router.get("/search-docs")
-def searchDocs(q: str,user=Depends(get_current_user)):
+def searchDocs(q: str, user=Depends(get_current_user)):
+    user_id = user.get("sub")
     vector = get_embedding(q)
+
+    # Filtrer les documents appartenant à l'utilisateur
+    qdrant_filter = Filter(
+        must=[
+            FieldCondition(key="owner_id", match={"value": user_id})
+        ]
+    )
+
     results = client.search(
         collection_name=COLLECTION,
         query_vector=vector,
         limit=5,
-        with_payload=True
+        with_payload=True,
+        query_filter=qdrant_filter
     )
+
     return [{"text": r.payload["text"], "score": r.score} for r in results]

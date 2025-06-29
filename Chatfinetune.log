@@ -2,36 +2,47 @@
   backends.update(_get_backends("networkx.backends"))
 INFO:     Will watch for changes in these directories: ['/home/rino/deploy-finetune']
 INFO:     Uvicorn running on http://0.0.0.0:8001 (Press CTRL+C to quit)
-INFO:     Started reloader process [173435] using StatReload
+INFO:     Started reloader process [3350] using StatReload
 📂 Chargement du modèle fine-tuné depuis models/esti-rag-ft
-📦 Utilisation du modèle : ./models/esti-rag-ft-v7
+📦 Utilisation du modèle : ./models/esti-rag-ft-v11
 /home/rino/deploy-finetune/lib64/python3.9/site-packages/networkx/utils/backends.py:135: RuntimeWarning: networkx backend defined more than once: nx-loopback
   backends.update(_get_backends("networkx.backends"))
-INFO:     Started server process [173503]
+INFO:     Started server process [3447]
 INFO:     Waiting for application startup.
 INFO:     Application startup complete.
-WARNING:  StatReload detected changes in 'api/endpoints.py'. Reloading...
+📂 Chargement du modèle fine-tuné depuis models/esti-rag-ft
+📦 Utilisation du modèle : ./models/esti-rag-ft-v11
+INFO:     102.17.118.145:0 - "OPTIONS /ask HTTP/1.0" 200 OK
+INFO:     102.17.118.145:0 - "POST /ask HTTP/1.0" 200 OK
+INFO:     102.17.118.145:0 - "POST /ask HTTP/1.0" 200 OK
+INFO:     102.17.118.145:0 - "OPTIONS /documents HTTP/1.0" 200 OK
+INFO:     102.17.118.145:0 - "GET /documents HTTP/1.0" 200 OK
+INFO:     102.17.118.145:0 - "OPTIONS /feedback HTTP/1.0" 200 OK
+🧠 Chargement SentenceTransformer depuis : ./models/esti-rag-ft-v11
+
+🔄 Itération #1 de fine-tuning...
+Computing widget examples:   0%|          | 0/1 [00:00<?, ?example/s]                                                                       0%|          | 0/4 [00:00<?, ?it/s]/home/rino/deploy-finetune/lib64/python3.9/site-packages/torch/utils/data/dataloader.py:665: UserWarning: 'pin_memory' argument is set as true but no accelerator is found, then device pinned memory won't be used.
+  warnings.warn(warn_msg)
+ 25%|██▌       | 1/4 [00:02<00:08,  2.76s/it] 50%|█████     | 2/4 [00:02<00:02,  1.24s/it] 75%|███████▌  | 3/4 [00:04<00:01,  1.52s/it]100%|██████████| 4/4 [00:05<00:00,  1.17s/it]                                             100%|██████████| 4/4 [00:05<00:00,  1.17s/it]100%|██████████| 4/4 [00:05<00:00,  1.35s/it]
+{'train_runtime': 5.4124, 'train_samples_per_second': 1.848, 'train_steps_per_second': 0.739, 'train_loss': 0.11907357722520828, 'epoch': 2.0}
+✅ Fine-tuning terminé pour cette itération.
+📈 Scores positifs : ['0.2009']
+📉 Scores négatifs : ['0.1501', '0.2003', '0.1363', '0.1712']
+✅ min(score_positif) = 0.2009
+❌ max(score_négatif) = 0.2003
+🎯 Condition atteinte : tous les positifs sont mieux scorés que tous les négatifs.
+INFO:     102.17.118.145:0 - "POST /feedback HTTP/1.0" 200 OK
+INFO:     102.17.118.145:0 - "OPTIONS /deploy HTTP/1.0" 200 OK
+INFO:     127.0.0.1:57230 - "GET /download-model?version=esti-rag-ft-v12 HTTP/1.1" 200 OK
+INFO:     102.17.118.145:0 - "POST /deploy HTTP/1.0" 200 OK
+INFO:     102.17.118.145:0 - "OPTIONS /ask HTTP/1.0" 200 OK
+INFO:     102.17.118.145:0 - "POST /ask HTTP/1.0" 200 OK
+INFO:     102.17.118.145:0 - "OPTIONS /ask HTTP/1.0" 200 OK
+INFO:     102.17.118.145:0 - "POST /ask HTTP/1.0" 200 OK
 INFO:     Shutting down
 INFO:     Waiting for application shutdown.
 INFO:     Application shutdown complete.
-INFO:     Finished server process [173503]
-/home/rino/deploy-finetune/lib64/python3.9/site-packages/networkx/utils/backends.py:135: RuntimeWarning: networkx backend defined more than once: nx-loopback
-  backends.update(_get_backends("networkx.backends"))
-INFO:     Started server process [175834]
-INFO:     Waiting for application startup.
-INFO:     Application startup complete.
-WARNING:  StatReload detected changes in 'api/endpoints.py'. Reloading...
-INFO:     Shutting down
-INFO:     Waiting for application shutdown.
-INFO:     Application shutdown complete.
-INFO:     Finished server process [175834]
-/home/rino/deploy-finetune/lib64/python3.9/site-packages/networkx/utils/backends.py:135: RuntimeWarning: networkx backend defined more than once: nx-loopback
-  backends.update(_get_backends("networkx.backends"))
-INFO:     Started server process [175896]
-INFO:     Waiting for application startup.
-INFO:     Application startup complete.
-INFO:     Shutting down
-INFO:     Waiting for application shutdown.
-INFO:     Application shutdown complete.
-INFO:     Finished server process [175896]
-INFO:     Stopping reloader process [173435]
+INFO:     Finished server process [3447]
+INFO:     Stopping reloader process [3350]
+/usr/lib64/python3.9/multiprocessing/resource_tracker.py:216: UserWarning: resource_tracker: There appear to be 1 leaked semaphore objects to clean up at shutdown
+  warnings.warn('resource_tracker: There appear to be %d '
