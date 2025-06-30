@@ -2,47 +2,360 @@
   backends.update(_get_backends("networkx.backends"))
 INFO:     Will watch for changes in these directories: ['/home/rino/deploy-finetune']
 INFO:     Uvicorn running on http://0.0.0.0:8001 (Press CTRL+C to quit)
-INFO:     Started reloader process [3350] using StatReload
+INFO:     Started reloader process [60187] using StatReload
 📂 Chargement du modèle fine-tuné depuis models/esti-rag-ft
-📦 Utilisation du modèle : ./models/esti-rag-ft-v11
+📦 Utilisation du modèle : ./models/esti-rag-ft-v12
 /home/rino/deploy-finetune/lib64/python3.9/site-packages/networkx/utils/backends.py:135: RuntimeWarning: networkx backend defined more than once: nx-loopback
   backends.update(_get_backends("networkx.backends"))
-INFO:     Started server process [3447]
+INFO:     Started server process [60289]
 INFO:     Waiting for application startup.
 INFO:     Application startup complete.
 📂 Chargement du modèle fine-tuné depuis models/esti-rag-ft
-📦 Utilisation du modèle : ./models/esti-rag-ft-v11
-INFO:     102.17.118.145:0 - "OPTIONS /ask HTTP/1.0" 200 OK
-INFO:     102.17.118.145:0 - "POST /ask HTTP/1.0" 200 OK
-INFO:     102.17.118.145:0 - "POST /ask HTTP/1.0" 200 OK
-INFO:     102.17.118.145:0 - "OPTIONS /documents HTTP/1.0" 200 OK
-INFO:     102.17.118.145:0 - "GET /documents HTTP/1.0" 200 OK
-INFO:     102.17.118.145:0 - "OPTIONS /feedback HTTP/1.0" 200 OK
-🧠 Chargement SentenceTransformer depuis : ./models/esti-rag-ft-v11
-
-🔄 Itération #1 de fine-tuning...
-Computing widget examples:   0%|          | 0/1 [00:00<?, ?example/s]                                                                       0%|          | 0/4 [00:00<?, ?it/s]/home/rino/deploy-finetune/lib64/python3.9/site-packages/torch/utils/data/dataloader.py:665: UserWarning: 'pin_memory' argument is set as true but no accelerator is found, then device pinned memory won't be used.
-  warnings.warn(warn_msg)
- 25%|██▌       | 1/4 [00:02<00:08,  2.76s/it] 50%|█████     | 2/4 [00:02<00:02,  1.24s/it] 75%|███████▌  | 3/4 [00:04<00:01,  1.52s/it]100%|██████████| 4/4 [00:05<00:00,  1.17s/it]                                             100%|██████████| 4/4 [00:05<00:00,  1.17s/it]100%|██████████| 4/4 [00:05<00:00,  1.35s/it]
-{'train_runtime': 5.4124, 'train_samples_per_second': 1.848, 'train_steps_per_second': 0.739, 'train_loss': 0.11907357722520828, 'epoch': 2.0}
-✅ Fine-tuning terminé pour cette itération.
-📈 Scores positifs : ['0.2009']
-📉 Scores négatifs : ['0.1501', '0.2003', '0.1363', '0.1712']
-✅ min(score_positif) = 0.2009
-❌ max(score_négatif) = 0.2003
-🎯 Condition atteinte : tous les positifs sont mieux scorés que tous les négatifs.
-INFO:     102.17.118.145:0 - "POST /feedback HTTP/1.0" 200 OK
-INFO:     102.17.118.145:0 - "OPTIONS /deploy HTTP/1.0" 200 OK
-INFO:     127.0.0.1:57230 - "GET /download-model?version=esti-rag-ft-v12 HTTP/1.1" 200 OK
-INFO:     102.17.118.145:0 - "POST /deploy HTTP/1.0" 200 OK
-INFO:     102.17.118.145:0 - "OPTIONS /ask HTTP/1.0" 200 OK
-INFO:     102.17.118.145:0 - "POST /ask HTTP/1.0" 200 OK
-INFO:     102.17.118.145:0 - "OPTIONS /ask HTTP/1.0" 200 OK
-INFO:     102.17.118.145:0 - "POST /ask HTTP/1.0" 200 OK
-INFO:     Shutting down
-INFO:     Waiting for application shutdown.
-INFO:     Application shutdown complete.
-INFO:     Finished server process [3447]
-INFO:     Stopping reloader process [3350]
-/usr/lib64/python3.9/multiprocessing/resource_tracker.py:216: UserWarning: resource_tracker: There appear to be 1 leaked semaphore objects to clean up at shutdown
-  warnings.warn('resource_tracker: There appear to be %d '
+📦 Utilisation du modèle : ./models/esti-rag-ft-v12
+INFO:     102.17.118.145:0 - "OPTIONS /delete-document?filename=Pr%C3%A9sentation_TechNova.docx HTTP/1.0" 200 OK
+INFO:     102.17.118.145:0 - "DELETE /delete-document?filename=Pr%C3%A9sentation_TechNova.docx HTTP/1.0" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/home/rino/deploy-finetune/lib64/python3.9/site-packages/uvicorn/protocols/http/h11_impl.py", line 403, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+  File "/home/rino/deploy-finetune/lib64/python3.9/site-packages/uvicorn/middleware/proxy_headers.py", line 60, in __call__
+    return await self.app(scope, receive, send)
+  File "/home/rino/deploy-finetune/lib64/python3.9/site-packages/fastapi/applications.py", line 1054, in __call__
+    await super().__call__(scope, receive, send)
+  File "/home/rino/deploy-finetune/lib64/python3.9/site-packages/starlette/applications.py", line 112, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/rino/deploy-finetune/lib64/python3.9/site-packages/starlette/middleware/errors.py", line 187, in __call__
+    raise exc
+  File "/home/rino/deploy-finetune/lib64/python3.9/site-packages/starlette/middleware/errors.py", line 165, in __call__
+    await self.app(scope, receive, _send)
+  File "/home/rino/deploy-finetune/lib64/python3.9/site-packages/starlette/middleware/cors.py", line 93, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "/home/rino/deploy-finetune/lib64/python3.9/site-packages/starlette/middleware/cors.py", line 144, in simple_response
+    await self.app(scope, receive, send)
+  File "/home/rino/deploy-finetune/lib64/python3.9/site-packages/starlette/middleware/exceptions.py", line 62, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/home/rino/deploy-finetune/lib64/python3.9/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/home/rino/deploy-finetune/lib64/python3.9/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/rino/deploy-finetune/lib64/python3.9/site-packages/starlette/routing.py", line 714, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/rino/deploy-finetune/lib64/python3.9/site-packages/starlette/routing.py", line 734, in app
+    await route.handle(scope, receive, send)
+  File "/home/rino/deploy-finetune/lib64/python3.9/site-packages/starlette/routing.py", line 288, in handle
+    await self.app(scope, receive, send)
+  File "/home/rino/deploy-finetune/lib64/python3.9/site-packages/starlette/routing.py", line 76, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/home/rino/deploy-finetune/lib64/python3.9/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/home/rino/deploy-finetune/lib64/python3.9/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/rino/deploy-finetune/lib64/python3.9/site-packages/starlette/routing.py", line 73, in app
+    response = await f(request)
+  File "/home/rino/deploy-finetune/lib64/python3.9/site-packages/fastapi/routing.py", line 301, in app
+    raw_response = await run_endpoint_function(
+  File "/home/rino/deploy-finetune/lib64/python3.9/site-packages/fastapi/routing.py", line 212, in run_endpoint_function
+    return await dependant.call(**values)
+  File "/home/rino/deploy-finetune/api/endpoints.py", line 354, in delete_document
+    delete_result = supabase.table("documents") \
+  File "/home/rino/deploy-finetune/lib64/python3.9/site-packages/postgrest/_sync/request_builder.py", line 78, in execute
+    raise APIError(dict(json_obj))
+postgrest.exceptions.APIError: {'message': 'update or delete on table "documents" violates foreign key constraint "chatbot_document_association_document_name_fkey" on table "chatbot_document_association"', 'code': '23503', 'hint': None, 'details': 'Key (name)=(Présentation_TechNova.docx) is still referenced from table "chatbot_document_association".'}
+INFO:     102.17.118.145:0 - "OPTIONS /delete-document?filename=Pr%C3%A9sentation_TechNova.docx HTTP/1.0" 200 OK
+INFO:     102.17.118.145:0 - "DELETE /delete-document?filename=Pr%C3%A9sentation_TechNova.docx HTTP/1.0" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/home/rino/deploy-finetune/lib64/python3.9/site-packages/uvicorn/protocols/http/h11_impl.py", line 403, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+  File "/home/rino/deploy-finetune/lib64/python3.9/site-packages/uvicorn/middleware/proxy_headers.py", line 60, in __call__
+    return await self.app(scope, receive, send)
+  File "/home/rino/deploy-finetune/lib64/python3.9/site-packages/fastapi/applications.py", line 1054, in __call__
+    await super().__call__(scope, receive, send)
+  File "/home/rino/deploy-finetune/lib64/python3.9/site-packages/starlette/applications.py", line 112, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/rino/deploy-finetune/lib64/python3.9/site-packages/starlette/middleware/errors.py", line 187, in __call__
+    raise exc
+  File "/home/rino/deploy-finetune/lib64/python3.9/site-packages/starlette/middleware/errors.py", line 165, in __call__
+    await self.app(scope, receive, _send)
+  File "/home/rino/deploy-finetune/lib64/python3.9/site-packages/starlette/middleware/cors.py", line 93, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "/home/rino/deploy-finetune/lib64/python3.9/site-packages/starlette/middleware/cors.py", line 144, in simple_response
+    await self.app(scope, receive, send)
+  File "/home/rino/deploy-finetune/lib64/python3.9/site-packages/starlette/middleware/exceptions.py", line 62, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/home/rino/deploy-finetune/lib64/python3.9/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/home/rino/deploy-finetune/lib64/python3.9/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/rino/deploy-finetune/lib64/python3.9/site-packages/starlette/routing.py", line 714, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/rino/deploy-finetune/lib64/python3.9/site-packages/starlette/routing.py", line 734, in app
+    await route.handle(scope, receive, send)
+  File "/home/rino/deploy-finetune/lib64/python3.9/site-packages/starlette/routing.py", line 288, in handle
+    await self.app(scope, receive, send)
+  File "/home/rino/deploy-finetune/lib64/python3.9/site-packages/starlette/routing.py", line 76, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/home/rino/deploy-finetune/lib64/python3.9/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/home/rino/deploy-finetune/lib64/python3.9/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/rino/deploy-finetune/lib64/python3.9/site-packages/starlette/routing.py", line 73, in app
+    response = await f(request)
+  File "/home/rino/deploy-finetune/lib64/python3.9/site-packages/fastapi/routing.py", line 301, in app
+    raw_response = await run_endpoint_function(
+  File "/home/rino/deploy-finetune/lib64/python3.9/site-packages/fastapi/routing.py", line 212, in run_endpoint_function
+    return await dependant.call(**values)
+  File "/home/rino/deploy-finetune/api/endpoints.py", line 354, in delete_document
+    delete_result = supabase.table("documents") \
+  File "/home/rino/deploy-finetune/lib64/python3.9/site-packages/postgrest/_sync/request_builder.py", line 78, in execute
+    raise APIError(dict(json_obj))
+postgrest.exceptions.APIError: {'message': 'update or delete on table "documents" violates foreign key constraint "chatbot_document_association_document_name_fkey" on table "chatbot_document_association"', 'code': '23503', 'hint': None, 'details': 'Key (name)=(Présentation_TechNova.docx) is still referenced from table "chatbot_document_association".'}
+delete_result: data=[{'id': 34, 'created_at': '2025-06-29T15:55:35.701426+00:00', 'owner_id': '26301f7d-db83-4b67-98bc-6500cd4e66ef', 'name': 'Présentation_TechNova.docx', 'url': '26301f7d-db83-4b67-98bc-6500cd4e66ef/Presentation_TechNova.docx'}] count=None
+key: 26301f7d-db83-4b67-98bc-6500cd4e66ef/Presentation_TechNova.docx
+INFO:     102.17.118.145:0 - "DELETE /delete-document?filename=Pr%C3%A9sentation_TechNova.docx HTTP/1.0" 200 OK
+INFO:     102.17.118.145:0 - "OPTIONS /upload-file HTTP/1.0" 200 OK
+🧠 Chargement SentenceTransformer depuis : ./models/esti-rag-ft-v12
+🧠 Chargement SentenceTransformer depuis : ./models/esti-rag-ft-v12
+🧠 Chargement SentenceTransformer depuis : ./models/esti-rag-ft-v12
+INFO:     102.17.118.145:0 - "POST /upload-file HTTP/1.0" 200 OK
+INFO:     102.17.118.145:0 - "OPTIONS /upload-file HTTP/1.0" 200 OK
+🧠 Chargement SentenceTransformer depuis : ./models/esti-rag-ft-v12
+🧠 Chargement SentenceTransformer depuis : ./models/esti-rag-ft-v12
+🧠 Chargement SentenceTransformer depuis : ./models/esti-rag-ft-v12
+INFO:     102.17.118.145:0 - "POST /upload-file HTTP/1.0" 200 OK
+INFO:     34.86.209.69:0 - "GET / HTTP/1.0" 200 OK
+INFO:     185.177.72.179:0 - "GET /.env HTTP/1.0" 404 Not Found
+INFO:     185.177.72.179:0 - "GET /.env.local HTTP/1.0" 404 Not Found
+INFO:     185.177.72.179:0 - "GET /.env.dev HTTP/1.0" 404 Not Found
+INFO:     185.177.72.179:0 - "GET /.env.development HTTP/1.0" 404 Not Found
+INFO:     185.177.72.179:0 - "GET /.env.prod HTTP/1.0" 404 Not Found
+INFO:     185.177.72.179:0 - "GET /.env.production HTTP/1.0" 404 Not Found
+INFO:     185.177.72.179:0 - "GET /.env.stage HTTP/1.0" 404 Not Found
+INFO:     185.177.72.179:0 - "GET /.env.test HTTP/1.0" 404 Not Found
+INFO:     185.177.72.179:0 - "GET /.env.example HTTP/1.0" 404 Not Found
+INFO:     185.177.72.179:0 - "GET /.env.bak HTTP/1.0" 404 Not Found
+INFO:     185.177.72.179:0 - "GET /.env.old HTTP/1.0" 404 Not Found
+INFO:     185.177.72.179:0 - "GET /config/.env HTTP/1.0" 404 Not Found
+INFO:     185.177.72.179:0 - "GET /config/config.env HTTP/1.0" 404 Not Found
+INFO:     185.177.72.179:0 - "GET /app/.env HTTP/1.0" 404 Not Found
+INFO:     185.177.72.179:0 - "GET /admin/.env HTTP/1.0" 404 Not Found
+INFO:     185.177.72.179:0 - "GET /api/.env HTTP/1.0" 404 Not Found
+INFO:     185.177.72.179:0 - "GET /apps/.env HTTP/1.0" 404 Not Found
+INFO:     185.177.72.179:0 - "GET /server/.env HTTP/1.0" 404 Not Found
+INFO:     185.177.72.179:0 - "GET /backend/.env HTTP/1.0" 404 Not Found
+INFO:     185.177.72.179:0 - "GET /aws/credentials HTTP/1.0" 404 Not Found
+INFO:     185.177.72.179:0 - "GET /.aws/credentials HTTP/1.0" 404 Not Found
+INFO:     185.177.72.179:0 - "GET /.aws/config HTTP/1.0" 404 Not Found
+INFO:     185.177.72.179:0 - "GET /config/aws.yml HTTP/1.0" 404 Not Found
+INFO:     185.177.72.179:0 - "GET /config/aws.json HTTP/1.0" 404 Not Found
+INFO:     185.177.72.179:0 - "GET /docker-compose.yml HTTP/1.0" 404 Not Found
+INFO:     185.177.72.179:0 - "GET /docker-compose.override.yml HTTP/1.0" 404 Not Found
+INFO:     185.177.72.179:0 - "GET /docker-compose.prod.yml HTTP/1.0" 404 Not Found
+INFO:     185.177.72.179:0 - "GET /docker-compose.dev.yml HTTP/1.0" 404 Not Found
+INFO:     185.177.72.179:0 - "GET /config/config.json HTTP/1.0" 404 Not Found
+INFO:     185.177.72.179:0 - "GET /config.json HTTP/1.0" 404 Not Found
+INFO:     185.177.72.179:0 - "GET /config.yaml HTTP/1.0" 404 Not Found
+INFO:     185.177.72.179:0 - "GET /config.yml HTTP/1.0" 404 Not Found
+INFO:     185.177.72.179:0 - "GET /secrets.json HTTP/1.0" 404 Not Found
+INFO:     185.177.72.179:0 - "GET /secrets.yml HTTP/1.0" 404 Not Found
+INFO:     185.177.72.179:0 - "GET /credentials.json HTTP/1.0" 404 Not Found
+INFO:     185.177.72.179:0 - "GET /.git-credentials HTTP/1.0" 404 Not Found
+INFO:     185.177.72.179:0 - "GET /.git/config HTTP/1.0" 404 Not Found
+INFO:     185.177.72.179:0 - "GET /.gitignore HTTP/1.0" 404 Not Found
+INFO:     185.177.72.179:0 - "GET /.gitlab-ci.yml HTTP/1.0" 404 Not Found
+INFO:     185.177.72.179:0 - "GET /.github/workflows/ HTTP/1.0" 404 Not Found
+INFO:     185.177.72.179:0 - "GET /.idea/workspace.xml HTTP/1.0" 404 Not Found
+INFO:     185.177.72.179:0 - "GET /.vscode/settings.json HTTP/1.0" 404 Not Found
+INFO:     185.177.72.179:0 - "GET /storage/logs/laravel.log HTTP/1.0" 404 Not Found
+INFO:     185.177.72.179:0 - "GET /storage/logs/error.log HTTP/1.0" 404 Not Found
+INFO:     185.177.72.179:0 - "GET /logs/debug.log HTTP/1.0" 404 Not Found
+INFO:     185.177.72.179:0 - "GET /logs/app.log HTTP/1.0" 404 Not Found
+INFO:     185.177.72.179:0 - "GET /debug.log HTTP/1.0" 404 Not Found
+INFO:     185.177.72.179:0 - "GET /error.log HTTP/1.0" 404 Not Found
+INFO:     185.177.72.179:0 - "GET /.DS_Store HTTP/1.0" 404 Not Found
+INFO:     185.177.72.179:0 - "GET /backup.zip HTTP/1.0" 404 Not Found
+INFO:     185.177.72.179:0 - "GET /.backup HTTP/1.0" 404 Not Found
+INFO:     185.177.72.179:0 - "GET /db.sql HTTP/1.0" 404 Not Found
+INFO:     185.177.72.179:0 - "GET /dump.sql HTTP/1.0" 404 Not Found
+INFO:     185.177.72.179:0 - "GET /database.sql HTTP/1.0" 404 Not Found
+INFO:     185.177.72.179:0 - "GET /backup.tar.gz HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /.aws/config HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /.aws/credentials HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /.AWS_/credentials HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /.env HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /.env.bak HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /.env.example HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /.env.local HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /.env.old HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /.env.prod HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /.env.production HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /.env.production.local HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /.env.sample HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /.env.stage HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /.envs/.production/.django HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /.git/config HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /.git/HEAD HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /.travis.yml HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /.vscode/.env HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /_phpinfo.php HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /_profiler/phpinfo HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /_profiler/phpinfo/info.php HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /_profiler/phpinfo/phpinfo.php HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /?phpinfo=1 HTTP/1.0" 200 OK
+INFO:     185.177.72.106:0 - "GET /admin/.env HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /admin/config HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /admin/config?cmd=cat+/root/.aws/credentials HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /admin/controllers/merchant.js HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /admin/controllers/partner.js HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /admin/server_info.php HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /api/.env HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /api/config.js HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /api/config/config.yml HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /api/config.env HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /api/objects/codes.php.save HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /api/shared/.env HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /api/shared/config.env HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /api/shared/config/.env HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /api/shared/config/config.env HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /app.js HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /app/.env HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /app/config/parameters.yml HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /app_dev.php/_profiler/phpinfo HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /appsettings.json HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /application/.env HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /application.properties HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /apps/.env HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /aws-secret.yaml HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /aws.yml HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /aws/credentials HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /awstats/.env HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /backend/.env HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /backend/config/default.yml HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /backend/config/development.yml HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /backend/config/settings.yml HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /blog.env HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /cloud/Scraper.js HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /conf/.env HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /config.js HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /config/application.yml HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /config/aws.yml HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /config/config.json HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /config/constants.js HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /config/env HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /config/local.yml HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /config/parameters.yml HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /config/secrets.json HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /config/settings.json HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /config/settings.local HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /config/settings.prod HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /config/storage.yml HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /config.yaml HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /config.yml HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /controller/admin/post.js HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /controller/api/post.js HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /controllers/settings.js HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /core/.env HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /crm/.env HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /cron/.env HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /dashboard/phpinfo.php HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /debug/default/view HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /development/.env HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /dev/.env HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /docker/.env HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /docker/app/.env HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /env/.env HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /env.backup HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /gatsby-config.js HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /getcpuutil.php-bakworking HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /helper.js HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /helper/EmailHelper.js HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /i.php HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /index.html HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /index.js HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /info.php HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /js/.env HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /js/main.js HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /karma.conf.json HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /kyc/.env HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /lara/info.php HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /lara/phpinfo.php HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /laravel/.env HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /laravel/core/.env HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /laravel/info.php HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /library/.env HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /local/.env HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /main.js HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /main.yml HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /main/.env HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /mail/.env HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /mailer/.env HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /my_env/chakaash.py HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /my_env/newsletter.py HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /my_env/palash.py HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /myproject/.env HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /mytest/astech_robot.js HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /new/.env HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /new/.env.local HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /new/.env.production HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /new/.env.staging HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /nginx/.env HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /node/.env_example HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /node-api/.env HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /node_modules/.env HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /nextjs-app/.env HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /partner/config/config.js HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /p.php HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /phpinfo HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /phpinfo.php HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /portal/.env HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /prod/.env HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /public/.env HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /public/js/main.js HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /react-app/.env HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /react-app/.env.production HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /scripts/nodemailer.js HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /s3.js HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /secured/phpinfo.php HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /server-info HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /server-info.php HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /server.js HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /server/config/database.js HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /service/email_service.py HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /settings.py HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /shared/config/config.js HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /site/.env HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /sms.py HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /static/js/main.js HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /storage/logs/laravel.log HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /swagger.js HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /swagger.json HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /test.php HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /test_phpinfo.php HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /user/config/config.js HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /user/controllers/index.js HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /vendor/.env HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /web/.env HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /website/.env HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /wp-config HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /wp-config.php.bak HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /wp-content/.env HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /xampp/.env HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /xampp/phpinfo.php HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET / HTTP/1.0" 200 OK
+INFO:     185.177.72.106:0 - "GET /www/.env HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /config.env HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /.env_sample HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /static/js/main.141b0494.js HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /static/js/2.ca066a4b.chunk.js HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /static/js/main.e85f7a37.js HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /server_info.php HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /config.json HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /app.py HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /apis/config/config.js HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /apis/controllers/users.js HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /configs/routes-4aug.js HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /configs/routes.js HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /configs/s3_config.json HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /.circleci/configs/development.yml HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /helpers/utility.js HTTP/1.0" 404 Not Found
+INFO:     185.177.72.106:0 - "GET /server/s3.js HTTP/1.0" 404 Not Found
