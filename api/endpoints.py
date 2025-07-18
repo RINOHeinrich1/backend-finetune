@@ -24,6 +24,7 @@ from dotenv import load_dotenv
 from model.embedding import get_embedding
 from supabase import create_client
 import re
+import gc
 import unicodedata
 
 def sanitize_filename(filename: str) -> str:
@@ -43,12 +44,13 @@ SUPABASE_SERVICE_ROLE_KEY = os.getenv("SUPABASE_SERVICE_ROLE_KEY")
 supabase = create_client(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY)
 router = APIRouter()
 
-CHATBOT_RELOAD_URL = os.getenv("CHATBOT_RELOAD_URL", "http://localhost:8002/reload-model")  # À adapter selon ton infra
+CHATBOT_RELOAD_URL = os.getenv("CHATBOT_RELOAD_URL", "https://madachat-embedder.hf.space/reload-model")  # À adapter selon ton infra
 
 
 QDRANT_URL = os.getenv("QDRANT_URL")
 QDRANT_API_KEY = os.getenv("QDRANT_API_KEY")
 COLLECTION = os.getenv("COLLECTION_NAME")
+POSTGRES_COLLECTION = os.getenv("POSTGRES_COLLECTION_NAME")
 VECTOR_SIZE = int(os.getenv("VECTOR_SIZE", "384"))
 
 class DeployRequest(BaseModel):
@@ -74,19 +76,34 @@ def root():
 @router.get("/documents")
 def list_documents(user=Depends(get_current_user)):
     try:
+        user_id = user.get("sub")
         results = []
         scroll_offset = None
+
+        # Appliquer un filtre pour récupérer uniquement les documents de l'utilisateur
+        qdrant_filter = Filter(
+            must=[
+                FieldCondition(key="owner_id", match={"value": user_id})
+            ]
+        )
 
         while True:
             scroll_result = client.scroll(
                 collection_name=COLLECTION,
-                scroll_filter=None,  # pas de filtre, on prend tout
+                scroll_filter=qdrant_filter,  # filtre activé ici
                 with_payload=True,
-                limit=100,  # récupère 100 docs par itération (ajustable)
+                limit=100,
                 offset=scroll_offset
             )
             points, scroll_offset = scroll_result
-            results.extend([point.payload["text"] for point in points if "text" in point.payload])
+            results.extend([
+                {
+                    "text": point.payload.get("text", ""),
+                    "source": point.payload.get("source", "inconnu")
+                }
+                for point in points if "text" in point.payload
+            ])
+
 
             if scroll_offset is None:
                 break
@@ -95,7 +112,6 @@ def list_documents(user=Depends(get_current_user)):
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-
 
 @router.post("/ask")
 def ask(request: QuestionRequest, user=Depends(get_current_user)):
@@ -126,7 +142,7 @@ def ask(request: QuestionRequest, user=Depends(get_current_user)):
 
         return {
             "question": request.question,
-            "results": [{"doc": r.payload["text"], "score": r.score} for r in results]
+            "results": [{"doc": r.payload["text"],"source":r.payload["source"], "score": r.score} for r in results]
         }
 
     except Exception as e:
@@ -135,60 +151,45 @@ def ask(request: QuestionRequest, user=Depends(get_current_user)):
 def deterministic_id(text: str) -> str:
     hash_bytes = hashlib.sha256(text.encode('utf-8')).digest()
     return str(uuid.UUID(bytes=hash_bytes[:16]))
+
 @router.post("/feedback")
-def feedback(request: FeedbackRequest,user=Depends(get_current_user)):
+def feedback(request: FeedbackRequest, user=Depends(get_current_user)):
     try:
-        # 🔍 Avant fine-tuning
-        query_vector = get_embedding(request.question)
-        before_results = client.search(
-            collection_name=COLLECTION,
-            query_vector=query_vector,
-            limit=5,
-            with_payload=True
-        )
-        model = SentenceTransformer(get_latest_model_path(),device=DEVICE)
-        # 🎯 Fine-tune
+        user_id = user.get("sub")
+        model = SentenceTransformer(get_latest_model_path(), device=DEVICE)
+
+        # Fine-tuning
         model = fine_tune_until_margin_respected(
             request.question,
-            request.positive_docs,
-            request.negative_docs,
+            [doc.text for doc in request.positive_docs],
+            [doc.text for doc in request.negative_docs],
             model,
             BATCH_SIZE,
             EPOCHS,
             WARMUP_STEPS,
             DEVICE,
-            30
+            30,
         )
 
-        # 🔁 Réinsertion des documents dans Qdrant (réencodés)
+        # Réinjection dans Qdrant
         points = []
-
         for doc in request.positive_docs + request.negative_docs:
-            embedding = model.encode(doc, normalize_embeddings=True).tolist()
+            embedding = model.encode(doc.text, normalize_embeddings=True).tolist()
             points.append(PointStruct(
-                id=deterministic_id(doc),
+                id=deterministic_id(doc.text),
                 vector=embedding,
-                payload={"text": doc}
+                payload={
+                    "text": doc.text,
+                    "source": doc.source,
+                    "owner_id": user_id,
+                }
             ))
 
         client.upsert(collection_name=COLLECTION, points=points)
-
-        # 🔍 Après fine-tuning
-        query_vector = model.encode(request.question, normalize_embeddings=True).tolist()
-        after_results = client.search(
-            collection_name=COLLECTION,
-            query_vector=query_vector,
-            limit=5,
-            with_payload=True
-        )
-
         return {
             "message": "✅ Fine-tuning terminé et documents mis à jour dans Qdrant.",
-            "comparison": {
-                "before": [{"doc": r.payload["text"], "score": r.score} for r in before_results],
-                "after": [{"doc": r.payload["text"], "score": r.score} for r in after_results]
-            }
         }
+
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -215,7 +216,7 @@ def deploy_model(user=Depends(get_current_user)):
         shutil.make_archive(f"./exported/{version_name}", 'zip', model_version_dir)
 
         # 5. Construire l’URL de téléchargement
-        model_url = f"http://localhost:8001/download-model?version={version_name}"
+        model_url = f"https://madaTuneApi.onirtech.com/download-model?version={version_name}"
 
         # 6. Notifier le chatbot-service
         response = requests.get(CHATBOT_RELOAD_URL, params={
@@ -270,8 +271,6 @@ if not client.collection_exists(COLLECTION):
 )
 
 
-@router.post("/upload-file")
-
 
 @router.post("/upload-file")
 async def upload(file: UploadFile = File(...), user=Depends(get_current_user)):
@@ -289,7 +288,6 @@ async def upload(file: UploadFile = File(...), user=Depends(get_current_user)):
         storage_path = f"{user_id}/{filename}"  # Structure: documents/user_id/filename.pdf
         safe_filename = sanitize_filename(filename)
         storage_path = f"{user_id}/{safe_filename}"
-
         supabase.storage.from_("documents").upload(
     path=storage_path,
     file=contents,
@@ -335,18 +333,14 @@ async def delete_document(
     user=Depends(get_current_user)
 ):
     user_id = user.get("sub")
-
     # 1. Récupérer le chemin du fichier dans Supabase avant suppression
     existing = supabase.table("documents") \
         .select("url") \
         .eq("name", filename) \
         .eq("owner_id", user_id) \
         .execute()
-
     if not existing.data:
         raise HTTPException(status_code=404, detail="Document introuvable")
-
-
     # En déduire le chemin relatif dans le bucket (supprime le domaine de l'URL)
     # Exemple : https://xyz.supabase.co/storage/v1/object/public/documents/USER_ID/fichier.pdf
     key = existing.data[0]["url"]
@@ -359,14 +353,12 @@ async def delete_document(
     print(f"delete_result: {delete_result}")
     if delete_result.data is  None:
         raise HTTPException(status_code=500, detail="Échec de la suppression dans Supabase")
-
     # 3. Supprimer le fichier du storage Supabase
     try:
         print(f"key: {key}")
         supabase.storage.from_("documents").remove([key])
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Erreur suppression storage: {str(e)}")
-
     # 4. Supprimer les vecteurs liés dans Qdrant
     # Supprimer les vecteurs liés dans Qdrant
     try:
@@ -393,14 +385,12 @@ async def delete_document(
 def searchDocs(q: str, user=Depends(get_current_user)):
     user_id = user.get("sub")
     vector = get_embedding(q)
-
     # Filtrer les documents appartenant à l'utilisateur
     qdrant_filter = Filter(
         must=[
             FieldCondition(key="owner_id", match={"value": user_id})
         ]
     )
-
     results = client.search(
         collection_name=COLLECTION,
         query_vector=vector,
@@ -408,5 +398,4 @@ def searchDocs(q: str, user=Depends(get_current_user)):
         with_payload=True,
         query_filter=qdrant_filter
     )
-
     return [{"text": r.payload["text"], "score": r.score} for r in results]
