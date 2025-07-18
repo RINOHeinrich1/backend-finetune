@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException,UploadFile,Depends, File
 from .schemas import QuestionRequest, FeedbackRequest
 from middlewares.auth import get_current_user 
-from model.fine_tuning import fine_tune_until_margin_respected
+from model.fine_tuning import fine_tune_until_margin_respected_once
 from qdrant_client import QdrantClient
 from qdrant_client.models import PointStruct, VectorParams,ScrollRequest
 from qdrant_client.models import Filter, FieldCondition, Range
@@ -25,6 +25,7 @@ from model.embedding import get_embedding
 from supabase import create_client
 import re
 import gc
+import torch
 import unicodedata
 
 def sanitize_filename(filename: str) -> str:
@@ -55,6 +56,26 @@ VECTOR_SIZE = int(os.getenv("VECTOR_SIZE", "384"))
 
 class DeployRequest(BaseModel):
     version: str = "esti-rag-ft-v7"
+def search_multiple_collections(
+    collections: list,
+    query_vector: list[float],
+    top_k: int,
+    qdrant_filter: Filter
+):
+    all_results = []
+    for collection_name in collections:
+        try:
+            results = client.search(
+                collection_name=collection_name,
+                query_vector=query_vector,
+                limit=top_k,
+                with_payload=True,
+                query_filter=qdrant_filter
+            )
+            all_results.extend(results)
+        except Exception as e:
+            print(f"Erreur dans la collection {collection_name}: {e}")
+    return sorted(all_results, key=lambda x: x.score, reverse=True)[:top_k]
 
 def get_next_model_version(base_name="esti-rag-ft", models_dir="./models") -> str:
     existing_versions = []
@@ -77,36 +98,35 @@ def root():
 def list_documents(user=Depends(get_current_user)):
     try:
         user_id = user.get("sub")
+        collections_to_query = [COLLECTION, POSTGRES_COLLECTION]
         results = []
-        scroll_offset = None
 
-        # Appliquer un filtre pour récupérer uniquement les documents de l'utilisateur
         qdrant_filter = Filter(
             must=[
                 FieldCondition(key="owner_id", match={"value": user_id})
             ]
         )
 
-        while True:
-            scroll_result = client.scroll(
-                collection_name=COLLECTION,
-                scroll_filter=qdrant_filter,  # filtre activé ici
-                with_payload=True,
-                limit=100,
-                offset=scroll_offset
-            )
-            points, scroll_offset = scroll_result
-            results.extend([
-                {
-                    "text": point.payload.get("text", ""),
-                    "source": point.payload.get("source", "inconnu")
-                }
-                for point in points if "text" in point.payload
-            ])
-
-
-            if scroll_offset is None:
-                break
+        for collection_name in collections_to_query:
+            scroll_offset = None
+            while True:
+                scroll_result = client.scroll(
+                    collection_name=collection_name,
+                    scroll_filter=qdrant_filter,
+                    with_payload=True,
+                    limit=100,
+                    offset=scroll_offset
+                )
+                points, scroll_offset = scroll_result
+                results.extend([
+                    {
+                        "text": point.payload.get("text", ""),
+                        "source": point.payload.get("source", "inconnu")
+                    }
+                    for point in points if "text" in point.payload
+                ])
+                if scroll_offset is None:
+                    break
 
         return {"documents": results}
 
@@ -117,32 +137,26 @@ def list_documents(user=Depends(get_current_user)):
 def ask(request: QuestionRequest, user=Depends(get_current_user)):
     try:
         model_path = "models/esti-rag-ft"
-
-        if os.path.exists(model_path) and os.path.isdir(model_path):
-            query_vector = get_embedding(request.question, model=model_path)
-        else:
-            query_vector = get_embedding(request.question, model="")  # modèle par défaut
-
+        model_used = model_path if os.path.isdir(model_path) else ""
+        query_vector = get_embedding(request.question, model=model_used)
         user_id = user.get("sub")
 
-        # Filtre pour ne récupérer que les documents de l'utilisateur connecté
         qdrant_filter = Filter(
             must=[
                 FieldCondition(key="owner_id", match={"value": user_id})
             ]
         )
 
-        results = client.search(
-            collection_name=COLLECTION,
+        results = search_multiple_collections(
+            collections=[COLLECTION, POSTGRES_COLLECTION],
             query_vector=query_vector,
-            limit=request.top_k,
-            with_payload=True,
-            query_filter=qdrant_filter
+            top_k=request.top_k,
+            qdrant_filter=qdrant_filter
         )
 
         return {
             "question": request.question,
-            "results": [{"doc": r.payload["text"],"source":r.payload["source"], "score": r.score} for r in results]
+            "results": [{"doc": r.payload["text"], "source": r.payload.get("source", "inconnu"), "score": r.score} for r in results]
         }
 
     except Exception as e:
@@ -156,10 +170,12 @@ def deterministic_id(text: str) -> str:
 def feedback(request: FeedbackRequest, user=Depends(get_current_user)):
     try:
         user_id = user.get("sub")
+
+        # 🔁 Chargement du modèle (à éviter de répéter inutilement)
         model = SentenceTransformer(get_latest_model_path(), device=DEVICE)
 
-        # Fine-tuning
-        model = fine_tune_until_margin_respected(
+        # 🎯 Fine-tuning
+        model = fine_tune_until_margin_respected_once(
             request.question,
             [doc.text for doc in request.positive_docs],
             [doc.text for doc in request.negative_docs],
@@ -167,32 +183,39 @@ def feedback(request: FeedbackRequest, user=Depends(get_current_user)):
             BATCH_SIZE,
             EPOCHS,
             WARMUP_STEPS,
-            DEVICE,
-            30,
+            DEVICE
         )
 
-        # Réinjection dans Qdrant
+        # ✨ Inference sans gradients
         points = []
-        for doc in request.positive_docs + request.negative_docs:
-            embedding = model.encode(doc.text, normalize_embeddings=True).tolist()
-            points.append(PointStruct(
-                id=deterministic_id(doc.text),
-                vector=embedding,
-                payload={
-                    "text": doc.text,
-                    "source": doc.source,
-                    "owner_id": user_id,
-                }
-            ))
+        with torch.no_grad():
+            for doc in request.positive_docs + request.negative_docs:
+                embedding = model.encode(doc.text, normalize_embeddings=True).tolist()
+                points.append(PointStruct(
+                    id=deterministic_id(doc.text),
+                    vector=embedding,
+                    payload={
+                        "text": doc.text,
+                        "source": doc.source,
+                        "owner_id": user_id,
+                    }
+                ))
 
+        # 📤 Injection dans Qdrant
         client.upsert(collection_name=COLLECTION, points=points)
+
+        # 🧹 Libération mémoire
+        del model
+        torch.cuda.empty_cache()
+        gc.collect()
+
         return {
             "message": "✅ Fine-tuning terminé et documents mis à jour dans Qdrant.",
         }
 
     except Exception as e:
+        print(e)
         raise HTTPException(status_code=500, detail=str(e))
-
 
 @router.post("/deploy")
 def deploy_model(user=Depends(get_current_user)):
@@ -385,17 +408,17 @@ async def delete_document(
 def searchDocs(q: str, user=Depends(get_current_user)):
     user_id = user.get("sub")
     vector = get_embedding(q)
-    # Filtrer les documents appartenant à l'utilisateur
     qdrant_filter = Filter(
         must=[
             FieldCondition(key="owner_id", match={"value": user_id})
         ]
     )
-    results = client.search(
-        collection_name=COLLECTION,
+
+    results = search_multiple_collections(
+        collections=[COLLECTION, POSTGRES_COLLECTION],
         query_vector=vector,
-        limit=5,
-        with_payload=True,
-        query_filter=qdrant_filter
+        top_k=5,
+        qdrant_filter=qdrant_filter
     )
+
     return [{"text": r.payload["text"], "score": r.score} for r in results]

@@ -1,18 +1,115 @@
 /home/rino/deploy-finetune/lib64/python3.9/site-packages/networkx/utils/backends.py:135: RuntimeWarning: networkx backend defined more than once: nx-loopback
   backends.update(_get_backends("networkx.backends"))
-INFO:     Started server process [1598082]
+INFO:     Will watch for changes in these directories: ['/home/rino/deploy-finetune']
+INFO:     Uvicorn running on http://0.0.0.0:8001 (Press CTRL+C to quit)
+INFO:     Started reloader process [1718423] using StatReload
+📂 Chargement du modèle fine-tuné depuis models/esti-rag-ft
+📦 Utilisation du modèle : ./models/esti-rag-ft-v33
+/home/rino/deploy-finetune/lib64/python3.9/site-packages/networkx/utils/backends.py:135: RuntimeWarning: networkx backend defined more than once: nx-loopback
+  backends.update(_get_backends("networkx.backends"))
+INFO:     Started server process [1718449]
 INFO:     Waiting for application startup.
 INFO:     Application startup complete.
-INFO:     Uvicorn running on http://0.0.0.0:8001 (Press CTRL+C to quit)
+WARNING:  StatReload detected changes in 'model/fine_tuning.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [1718449]
+/home/rino/deploy-finetune/lib64/python3.9/site-packages/networkx/utils/backends.py:135: RuntimeWarning: networkx backend defined more than once: nx-loopback
+  backends.update(_get_backends("networkx.backends"))
+INFO:     Started server process [1719667]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'model/fine_tuning.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [1719667]
+/home/rino/deploy-finetune/lib64/python3.9/site-packages/networkx/utils/backends.py:135: RuntimeWarning: networkx backend defined more than once: nx-loopback
+  backends.update(_get_backends("networkx.backends"))
+Traceback (most recent call last):
+  File "/home/rino/deploy-finetune/lib64/python3.9/site-packages/httpx/_transports/default.py", line 101, in map_httpcore_exceptions
+    yield
+  File "/home/rino/deploy-finetune/lib64/python3.9/site-packages/httpx/_transports/default.py", line 250, in handle_request
+    resp = self._pool.handle_request(req)
+  File "/home/rino/deploy-finetune/lib64/python3.9/site-packages/httpcore/_sync/connection_pool.py", line 256, in handle_request
+    raise exc from None
+  File "/home/rino/deploy-finetune/lib64/python3.9/site-packages/httpcore/_sync/connection_pool.py", line 236, in handle_request
+    response = connection.handle_request(
+  File "/home/rino/deploy-finetune/lib64/python3.9/site-packages/httpcore/_sync/connection.py", line 101, in handle_request
+    raise exc
+  File "/home/rino/deploy-finetune/lib64/python3.9/site-packages/httpcore/_sync/connection.py", line 78, in handle_request
+    stream = self._connect(request)
+  File "/home/rino/deploy-finetune/lib64/python3.9/site-packages/httpcore/_sync/connection.py", line 156, in _connect
+    stream = stream.start_tls(**kwargs)
+  File "/home/rino/deploy-finetune/lib64/python3.9/site-packages/httpcore/_backends/sync.py", line 170, in start_tls
+    raise exc
+  File "/usr/lib64/python3.9/contextlib.py", line 137, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "/home/rino/deploy-finetune/lib64/python3.9/site-packages/httpcore/_exceptions.py", line 14, in map_exceptions
+    raise to_exc(exc) from exc
+httpcore.ConnectTimeout: _ssl.c:1130: The handshake operation timed out
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/rino/deploy-finetune/lib64/python3.9/site-packages/qdrant_client/http/api_client.py", line 134, in send_inner
+    response = self._client.send(request)
+  File "/home/rino/deploy-finetune/lib64/python3.9/site-packages/httpx/_client.py", line 914, in send
+    response = self._send_handling_auth(
+  File "/home/rino/deploy-finetune/lib64/python3.9/site-packages/httpx/_client.py", line 942, in _send_handling_auth
+    response = self._send_handling_redirects(
+  File "/home/rino/deploy-finetune/lib64/python3.9/site-packages/httpx/_client.py", line 979, in _send_handling_redirects
+    response = self._send_single_request(request)
+  File "/home/rino/deploy-finetune/lib64/python3.9/site-packages/httpx/_client.py", line 1014, in _send_single_request
+    response = transport.handle_request(request)
+  File "/home/rino/deploy-finetune/lib64/python3.9/site-packages/httpx/_transports/default.py", line 250, in handle_request
+    resp = self._pool.handle_request(req)
+  File "/usr/lib64/python3.9/contextlib.py", line 137, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "/home/rino/deploy-finetune/lib64/python3.9/site-packages/httpx/_transports/default.py", line 118, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.ConnectTimeout: _ssl.c:1130: The handshake operation timed out
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+  File "/usr/lib64/python3.9/multiprocessing/spawn.py", line 116, in spawn_main
+    exitcode = _main(fd, parent_sentinel)
+  File "/usr/lib64/python3.9/multiprocessing/spawn.py", line 125, in _main
+    prepare(preparation_data)
+  File "/usr/lib64/python3.9/multiprocessing/spawn.py", line 236, in prepare
+    _fixup_main_from_path(data['init_main_from_path'])
+  File "/usr/lib64/python3.9/multiprocessing/spawn.py", line 287, in _fixup_main_from_path
+    main_content = runpy.run_path(main_path,
+  File "/usr/lib64/python3.9/runpy.py", line 288, in run_path
+    return _run_module_code(code, init_globals, run_name,
+  File "/usr/lib64/python3.9/runpy.py", line 97, in _run_module_code
+    _run_code(code, mod_globals, init_globals,
+  File "/usr/lib64/python3.9/runpy.py", line 87, in _run_code
+    exec(code, run_globals)
+  File "/home/rino/deploy-finetune/main.py", line 3, in <module>
+    from api.endpoints import router
+  File "/home/rino/deploy-finetune/api/endpoints.py", line 269, in <module>
+    if not client.collection_exists(COLLECTION):
+  File "/home/rino/deploy-finetune/lib64/python3.9/site-packages/qdrant_client/qdrant_client.py", line 2236, in collection_exists
+    return self._client.collection_exists(collection_name=collection_name, **kwargs)
+  File "/home/rino/deploy-finetune/lib64/python3.9/site-packages/qdrant_client/qdrant_remote.py", line 2597, in collection_exists
+    result: Optional[models.CollectionExistence] = self.http.collections_api.collection_exists(
+  File "/home/rino/deploy-finetune/lib64/python3.9/site-packages/qdrant_client/http/api/collections_api.py", line 281, in collection_exists
+    return self._build_for_collection_exists(
+  File "/home/rino/deploy-finetune/lib64/python3.9/site-packages/qdrant_client/http/api/collections_api.py", line 67, in _build_for_collection_exists
+    return self.api_client.request(
+  File "/home/rino/deploy-finetune/lib64/python3.9/site-packages/qdrant_client/http/api_client.py", line 95, in request
+    return self.send(request, type_)
+  File "/home/rino/deploy-finetune/lib64/python3.9/site-packages/qdrant_client/http/api_client.py", line 112, in send
+    response = self.middleware(request, self.send_inner)
+  File "/home/rino/deploy-finetune/lib64/python3.9/site-packages/qdrant_client/http/api_client.py", line 250, in __call__
+    return call_next(request)
+  File "/home/rino/deploy-finetune/lib64/python3.9/site-packages/qdrant_client/http/api_client.py", line 136, in send_inner
+    raise ResponseHandlingException(e)
+qdrant_client.http.exceptions.ResponseHandlingException: _ssl.c:1130: The handshake operation timed out
 📂 Chargement du modèle fine-tuné depuis models/esti-rag-ft
-📦 Utilisation du modèle : ./models/esti-rag-ft-v32
-INFO:     129.222.109.179:0 - "OPTIONS /ask HTTP/1.0" 200 OK
-INFO:     129.222.109.179:0 - "POST /ask HTTP/1.0" 200 OK
-INFO:     143.198.114.29:0 - "GET / HTTP/1.0" 200 OK
-INFO:     143.198.114.29:0 - "GET /favicon.ico HTTP/1.0" 404 Not Found
-INFO:     102.18.161.180:0 - "OPTIONS /ask HTTP/1.0" 200 OK
-INFO:     102.18.161.180:0 - "POST /ask HTTP/1.0" 200 OK
-INFO:     91.84.87.137:0 - "GET / HTTP/1.0" 200 OK
-INFO:     91.84.87.137:0 - "GET /js/lkk_ch.js HTTP/1.0" 404 Not Found
-INFO:     91.84.87.137:0 - "GET /js/twint_ch.js HTTP/1.0" 404 Not Found
-INFO:     185.177.72.104:0 - "GET /.git/config HTTP/1.0" 404 Not Found
+📦 Utilisation du modèle : ./models/esti-rag-ft-v33
+INFO:     Stopping reloader process [1718423]

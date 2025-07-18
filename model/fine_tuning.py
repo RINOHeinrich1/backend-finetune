@@ -128,28 +128,55 @@ def fine_tune_until_margin_respected(question, positive_docs, negative_docs,
     current_model.save("models/esti-rag-ft")
     return SentenceTransformer("models/esti-rag-ft", device=device)
 
-def fine_tune_with_multiple_negatives(question, positive_docs, model, batch_size, epochs, warmup_steps, device):
-    # Créer des paires question <-> positive
-    train_examples = [InputExample(texts=[question, doc]) for doc in positive_docs]
+
+def fine_tune_until_margin_respected_once(
+    question, positive_docs, negative_docs,
+    model, batch_size, epochs, warmup_steps, device,
+    positive_duplication_factor=20  # ✅ Valeur par défaut
+):
+    # 🔁 Réplication des positifs
+    train_examples = [
+        InputExample(texts=[question, doc], label=1.0)
+        for doc in positive_docs
+        for _ in range(positive_duplication_factor)
+    ] + [
+        InputExample(texts=[question, doc], label=0.0)
+        for doc in negative_docs
+    ]
 
     if not train_examples:
         print("⚠️ Aucun exemple pour fine-tuning.")
-        return None
+        return model
 
+    # 📦 Préparation des données
     train_dataloader = DataLoader(train_examples, shuffle=True, batch_size=batch_size)
-    train_loss = losses.MultipleNegativesRankingLoss(model)
+    train_loss = losses.CosineSimilarityLoss(model)
 
-    print(f"🏋️ Fine-tuning avec MultipleNegativesRankingLoss sur {len(train_examples)} exemples...")
+    for epoch in range(epochs):
+        print(f"\n🔁 Époch {epoch + 1}/{epochs}")
 
-    model.train()
-    model.fit(
-        train_objectives=[(train_dataloader, train_loss)],
-        epochs=epochs,
-        warmup_steps=warmup_steps,
-        show_progress_bar=True
-    )
-    print("✅ Fine-tuning terminé.")
+        model.fit(
+            train_objectives=[(train_dataloader, train_loss)],
+            epochs=1,
+            warmup_steps=warmup_steps,
+            show_progress_bar=True
+        )
 
+        # 📊 Évaluation de la marge
+        min_pos, max_neg, pos_scores, neg_scores = evaluate_score_margin(
+            model, question, positive_docs, negative_docs, device
+        )
+
+        print(f"📈 Scores positifs : {['%.4f' % s for s in pos_scores]}")
+        print(f"📉 Scores négatifs : {['%.4f' % s for s in neg_scores]}")
+        print(f"✅ min(score_positif) = {min_pos:.4f}")
+        print(f"❌ max(score_négatif) = {max_neg:.4f}")
+
+        # 🎯 Critère de séparation atteint ?
+        if min_pos > max_neg:
+            print("🎯 Critère de marge respecté. Fin d'entraînement.")
+            break
+
+    # 💾 Sauvegarde finale
     model.save("models/esti-rag-ft")
     return SentenceTransformer("models/esti-rag-ft", device=device)
-
